@@ -15,20 +15,29 @@ The software package contains the following functions/scripts:
 
 - findNonOverlappingExtremalRegions.m - returns number of connected components that have been fused together, based on iterative erosion of an input binary image.
 
-mainScript.m - the entry function. Reads images from a directory, creates output directory structure, and processes the images.
+- mainScript.m - the entry function. Reads images from a directory, creates output directory structure, and processes the images.
 
-setupParameters.m - specifies the parameters with which the algorithm shoud be run.
+- setupParameters.m - specifies the parameters with which the algorithm shoud be run.
 
 It makes use of the following toolbox and convenience functions:
 
-bfilter2.m - processes the image with an edge preserving bilateral filter.
+- bfilter2.m - processes the image with an edge preserving bilateral filter.
 
-contains.m - quickly identifies whether elements in an array are within margins.
+- contains.m - quickly identifies whether elements in an array are within margins.
 
-findImageIndices.m - returns image indices given rows and columns.
+- findImageIndices.m - returns image indices given rows and columns.
 
-imgpolarcoord.m - returns an image in polar coordinates.
+- imgpolarcoord.m - returns an image in polar coordinates.
 
-prepOutputDirectory.m - creates a directory structure to store the output and parameters.
+- prepOutputDirectory.m - creates a directory structure to store the output and parameters.
 
-recursivelyParseConnectedComponents.m - takes care of the iteration aspect of the findNonOverlappingExtremalRegions.m function.
+- recursivelyParseConnectedComponents.m - takes care of the iteration aspect of the findNonOverlappingExtremalRegions.m function.
+
+## Dataset
+We provide, for convenience, a single AOSLO split-detection image from a healthy volunteer.
+
+## Reference
+If you use end up using this software, please kindly reference: Bergeles et al. "Unsupervised identification of cone photoreceptors in non-confocal adaptive optics scanning light ophthalmoscope images", Biomedical Optics Express, Vol. 8, Issue 6, pp. 3081-3094 (2017)
+
+## Contact
+You can contact me for support at c.bergeles@ucl.ac.uk.
