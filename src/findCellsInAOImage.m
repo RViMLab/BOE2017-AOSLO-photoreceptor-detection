@@ -27,6 +27,7 @@ function [detectedCells, classLoss, otherInfo] = findCellsInAOImage(image, param
 % DATE
 %   2016.09.19
 %   2017.04.07
+%   2018.05.15
 %
 
   if nargin < 2
@@ -174,14 +175,6 @@ function [detectedCells, classLoss, otherInfo] = findCellsInAOImage(image, param
     
   end
    
-  if parameters.testOnlyBrightDarkLobes
-    
-    detectedCells = centres;
-    classLoss = 0;
-    return;
-    
-  end
-  
   %% Create SVM model
    
   % Establish cell centres and crop cells - get positive data
@@ -278,15 +271,6 @@ function [detectedCells, classLoss, otherInfo] = findCellsInAOImage(image, param
   end
   
   fprintf('Found %d pairs.\n', size(inliersFeaturesVec, 1));
-  
-  if parameters.testOnlySVD
-    
-    detectedCells = svdSelectedCentres;
-    classLoss = 0;
-    return;
-    
-  end
-  
   
   %% Find unstable points
   
@@ -405,24 +389,21 @@ function [detectedCells, classLoss, otherInfo] = findCellsInAOImage(image, param
       if score(idx, 1) > parameters.tScore %0.0 %strcmp(cellstr(label(idx)), 'cell')
 
         selectedCellCentroids = [selectedCellCentroids; [x y 1] ];
-
-        if ~parameters.testOnlySVM
+        
+        % Check if cell is too close to another cell, and, if yes, merge
+        [cellIdx, dist] = knnsearch(selectedCellCentroids, ...
+          selectedCellCentroids(end, :), ...
+          'dist', 'euclidean', 'k', 3);
+        
+        toMerge = find(dist < averageCellSize/2.1);
+        if ~isempty(cellIdx)
           
-          % Check if cell is too close to another cell, and, if yes, merge
-          [cellIdx, dist] = knnsearch(selectedCellCentroids, ...
-            selectedCellCentroids(end, :), ...
-            'dist', 'euclidean', 'k', 3);
-          
-          toMerge = find(dist < averageCellSize/2.1);
-          if ~isempty(cellIdx)
-            
-            selectedCellCentroids(cellIdx(toMerge(1)), :) = mean(selectedCellCentroids(cellIdx(toMerge), :), 1);
-            cellIdx = cellIdx(toMerge(2:end));
-            selectedCellCentroids(cellIdx, :) = [];
-            
-          end
+          selectedCellCentroids(cellIdx(toMerge(1)), :) = mean(selectedCellCentroids(cellIdx(toMerge), :), 1);
+          cellIdx = cellIdx(toMerge(2:end));
+          selectedCellCentroids(cellIdx, :) = [];
           
         end
+         
         
       end
 

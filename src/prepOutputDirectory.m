@@ -28,7 +28,7 @@ function [outputDirectory, imageDirectoryRaw, imageDirectoryAnnotated, markerDir
 %   2016.09.22
 %
 
-  if contains(get_operating_system, 'linux')
+  if contains(get_operating_system, 'linux') || contains(get_operating_system, 'mac')
     sepChar = '/';
   else
     sepChar = '\';

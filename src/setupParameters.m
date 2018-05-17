@@ -22,6 +22,7 @@ else
   parameters.cellSize = 12;
   
 end
+  parameters.cellSize = 12;
 
 parameters.bfilt.hSize = round(parameters.cellSize/4);
 if parameters.healthy

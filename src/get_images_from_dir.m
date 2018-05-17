@@ -50,7 +50,7 @@ function images = get_images_from_dir(directory, ...
     
     k = 1;
     if recursive
-      if contains(get_operating_system, 'linux')
+      if contains(get_operating_system, 'linux') || contains(get_operating_system, 'mac')
         files = rdir([directory '*/*']);
       else
         files = rdir([directory '*\*']);

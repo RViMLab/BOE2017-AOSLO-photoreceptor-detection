@@ -19,21 +19,26 @@ iptsetpref('ImshowBorder','tight');
 
 %% Get the directory of images and the data
 
-if contains('linux', get_operating_system)
+if contains('linux', get_operating_system) || contains(get_operating_system, 'mac')
   dirChar = '/';
 else
   dirChar = '\';
 end
 
 if ~exist('direc', 'var')
-  direc = uigetdir(['..' dirChar '..' dirChar '..' dirChar 'data' dirChar]);
+  direc = uigetdir(['..' dirChar '..' dirChar '..' dirChar 'data-sample' dirChar]);
 end
 
 if isempty(direc)
-  error('Please select the data directory before continuing.');
+  error('Please select the *PARENT* data directory before continuing.');
 end
 
-images = get_images_from_dir([direc dirChar 'raw-images' dirChar], 'tif', true, [1 Inf], true);
+% Mime of images to be read
+mime = 'tif';
+% Put as true if you have data in subdirectories of the selected directory
+readDirectoriesRecursively = false;
+loadOnlyImagePath = true;
+images = get_images_from_dir([direc dirChar 'raw-images' dirChar], mime, loadOnlyImagePath, [1 Inf], readDirectoriesRecursively);
 
 % Pre directories
 [outputDir, imageDirRaw, imageDirAnnotated, markerDir, ~] = prepOutputDirectory(direc);
@@ -45,7 +50,7 @@ for imIdx = 1:length(images) % Copy original file too
   
 end
 
-copyfile([direc '/markers'], markerDir)
+copyfile([direc dirChar 'markers'], markerDir)
 
 detectedCells = cell(length(images), 1);
 kfoldScore = zeros(length(images), 1);
@@ -58,7 +63,7 @@ close all hidden
 [h, wait_time] = start_waitbar('Scanning', 1, length(images));
 
 imageIdxs = 1:length(images);
-for imIdx = 1%imageIdxs
+for imIdx = imageIdxs
 
   fprintf('\n\n========= Image %d =======\n', imIdx);
   
@@ -118,7 +123,10 @@ for imIdx = 1%imageIdxs
     f5 = getframe(figure(5));
     pause(1);
     
-    imProcess = [f1.cdata; f2.cdata; f3.cdata; f5.cdata];
+    imProcess = [imresize(f1.cdata, 2*size(f1.cdata(:, :, 1))); 
+      imresize(f2.cdata, 2*size(f1.cdata(:, :, 1))); 
+      imresize(f3.cdata, 2*size(f1.cdata(:, :, 1))); 
+      imresize(f5.cdata, 2*size(f1.cdata(:, :, 1)))];
     
   end
   
